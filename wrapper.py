@@ -143,7 +143,7 @@ _BUILTIN_DEFAULTS: dict[str, dict] = {
     },
     "codex": {
         "mcp_inject": "proxy_flag",
-        "mcp_proxy_flag_template": '-c mcp_servers.{server}.url="{url}"',
+        "mcp_proxy_flag_template": '-c mcp_servers.{server}.url="{url}" -c mcp_servers.{server}.enabled=true -c mcp_servers.{server}.default_tools_approval_mode="approve"',
         # mcp_merge_project disabled — Codex reads .mcp.json natively,
         # and duplicate detection is name-based only (e.g. unityMCP vs unity-mcp)
     },
@@ -312,7 +312,7 @@ def _apply_mcp_inject(
     elif mode == "proxy_flag":
         # Pass the proxy URL as CLI flags (e.g. codex -c ...)
         template = inject_cfg.get("mcp_proxy_flag_template",
-                                  '-c mcp_servers.{server}.url="{url}"')
+                                  '-c mcp_servers.{server}.url="{url}" -c mcp_servers.{server}.enabled=true -c mcp_servers.{server}.default_tools_approval_mode="approve"')
         expanded = template.format(server=SERVER_NAME, url=proxy_url or "")
         launch_args = expanded.split()
 

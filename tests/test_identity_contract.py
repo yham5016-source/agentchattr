@@ -348,7 +348,12 @@ class WrapperLaunchTests(unittest.TestCase):
 
         self.assertEqual(args[0], "-c")
         self.assertIn('mcp_servers.agentchattr.url="http://127.0.0.1:7777/mcp"', args[1])
-        self.assertEqual(args[2], "--no-alt-screen")
+        self.assertEqual(args[2:4], ["-c", "mcp_servers.agentchattr.enabled=true"])
+        self.assertEqual(
+            args[4:6],
+            ["-c", 'mcp_servers.agentchattr.default_tools_approval_mode="approve"'],
+        )
+        self.assertEqual(args[6], "--no-alt-screen")
         self.assertIn("PATH", env)
 
 
