@@ -33,3 +33,8 @@ if %errorlevel% neq 0 (
 )
 
 python wrapper.py codex -- --dangerously-bypass-approvals-and-sandbox
+if %errorlevel% neq 0 (
+    echo.
+    echo   Agent exited unexpectedly. Check the output above.
+    pause
+)
