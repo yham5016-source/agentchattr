@@ -13,7 +13,7 @@ function attachmentSize(size) {
 function attachmentMarkup(att, pending = false) {
     // Only local upload paths are links; filenames and types are untrusted labels.
     if (!/^\/uploads\/[a-zA-Z0-9_.-]+$/.test(att.url || '')) return '';
-    const name = escapeHtml(att.name || 'Attachment').replace(/"/g, '&quot;');
+    const name = escapeHtml(att.name || '첨부파일').replace(/"/g, '&quot;');
     const url = escapeHtml(att.url);
     if (attachmentIsImage(att)) {
         return `<img src="${url}" alt="${name}" onclick="openImageModal('${url}')" title="${name}">`;
@@ -26,7 +26,7 @@ function attachmentMarkup(att, pending = false) {
             <span class="file-attachment-detail">${escapeHtml(detail)}</span>
         </span>`;
     if (pending) return `<div class="file-attachment">${info}</div>`;
-    return `<a class="file-attachment" href="${url}" data-name="${name}" title="Download ${name}" aria-label="Download ${name}" onclick="downloadAttachment(event, this)">
+    return `<a class="file-attachment" href="${url}" data-name="${name}" title="${name} 다운로드" aria-label="${name} 다운로드" onclick="downloadAttachment(event, this)">
         ${info}
         <svg class="file-download-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -43,7 +43,7 @@ function createAttachmentPreview(att, onRemove) {
     remove.type = 'button';
     remove.className = 'attachment-remove';
     remove.textContent = 'x';
-    remove.title = `Remove ${att.name || 'attachment'}`;
+    remove.title = `${att.name || '첨부파일'} 제거`;
     remove.setAttribute('aria-label', remove.title);
     remove.addEventListener('click', onRemove);
     wrap.appendChild(remove);
@@ -56,11 +56,11 @@ async function downloadAttachment(event, link) {
         const response = await fetch(link.getAttribute('href'), {
             headers: { 'X-Session-Token': window.SESSION_TOKEN },
         });
-        if (!response.ok) throw new Error('Download failed. Refresh the page and try again.');
+        if (!response.ok) throw new Error('다운로드에 실패했습니다. 페이지를 새로고침한 뒤 다시 시도하세요.');
         const url = URL.createObjectURL(await response.blob());
         const anchor = document.createElement('a');
         anchor.href = url;
-        anchor.download = link.dataset.name || 'Attachment';
+        anchor.download = link.dataset.name || '첨부파일';
         anchor.click();
         setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (error) {
@@ -77,7 +77,7 @@ async function uploadAttachment(file) {
         method: 'POST', headers: { 'X-Session-Token': window.SESSION_TOKEN }, body: form,
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Upload failed. Please try again.');
+    if (!response.ok) throw new Error(data.error || '업로드에 실패했습니다. 다시 시도하세요.');
     return data;
 }
 

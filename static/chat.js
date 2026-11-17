@@ -68,14 +68,14 @@ function enableDragScroll(el) {
 
 // --- Notification sounds ---
 const SOUND_OPTIONS = [
-    { value: 'soft-chime', label: 'Soft Chime' },
-    { value: 'bright-ping', label: 'Bright Ping' },
-    { value: 'gentle-pop', label: 'Gentle Pop' },
-    { value: 'alert-tone', label: 'Alert Tone' },
-    { value: 'pluck', label: 'Pluck' },
-    { value: 'click', label: 'Click' },
-    { value: 'warm-bell', label: 'Warm Bell' },
-    { value: 'none', label: 'None' },
+    { value: 'soft-chime', label: '부드러운 차임' },
+    { value: 'bright-ping', label: '밝은 핑' },
+    { value: 'gentle-pop', label: '잔잔한 팝' },
+    { value: 'alert-tone', label: '알림음' },
+    { value: 'pluck', label: '퉁기기' },
+    { value: 'click', label: '클릭' },
+    { value: 'warm-bell', label: '따뜻한 종소리' },
+    { value: 'none', label: '없음' },
 ];
 const DEFAULT_SOUND = 'soft-chime';
 const CROSS_CHANNEL_SOUND = 'pluck';
@@ -118,8 +118,8 @@ function buildSoundSettings() {
         row.className = 'sound-row';
         const label = document.createElement('span');
         label.className = 'sound-label';
-        label.textContent = name === 'default' ? 'Default sound'
-            : name === 'cross-channel' ? 'Background alerts'
+        label.textContent = name === 'default' ? '기본 소리'
+            : name === 'cross-channel' ? '다른 채널 알림'
             : (agentConfig[name]?.label || name);
         const select = document.createElement('select');
         select.className = 'sound-select';
@@ -137,7 +137,7 @@ function buildSoundSettings() {
         if (name !== 'default' && name !== 'cross-channel') {
             const o = document.createElement('option');
             o.value = '';
-            o.textContent = 'Use default';
+            o.textContent = '기본값 사용';
             if (!soundPrefs[name]) o.selected = true;
             select.insertBefore(o, select.firstChild);
         }
@@ -209,9 +209,9 @@ async function checkForUpdate() {
             return;
         }
 
-        const label = data.state === 'upstream_update' ? 'Upstream update available' : 'Update available';
+        const label = data.state === 'upstream_update' ? '원본 업데이트 있음' : '업데이트 있음';
         pill.href = data.url || 'https://github.com/bcurts/agentchattr/releases';
-        pill.innerHTML = `<span>${label}</span><button class="update-dismiss" onclick="dismissUpdate(event, '${data.latest}')" title="Dismiss">&times;</button>`;
+        pill.innerHTML = `<span>${label}</span><button class="update-dismiss" onclick="dismissUpdate(event, '${data.latest}')" title="닫기">&times;</button>`;
         pill.classList.remove('hidden');
     } catch {
         // Silent fail -- version check should never block the UI
@@ -319,13 +319,13 @@ function linkifyPaths(html) {
     // Windows paths: E:\foo\bar or E:/foo/bar
     html = html.replace(/(?<!["=\/])([A-Z]):[\\\/][\w\-.\\ \/]+/g, (match) => {
         const escaped = match.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-        return `<a class="file-link" href="#" onclick="openPath('${escaped}'); return false;" title="Open in file manager">${match}</a>`;
+        return `<a class="file-link" href="#" onclick="openPath('${escaped}'); return false;" title="파일 탐색기에서 열기">${match}</a>`;
     });
     // Unix paths: /Users/..., /home/..., /tmp/..., /opt/..., /var/..., /etc/...
     if (serverPlatform !== 'win32') {
         html = html.replace(/(?<!["=\w])(\/(?:Users|home|tmp|opt|var|etc|usr)\/[\w\-.\/ ]+)/g, (match) => {
             const escaped = match.replace(/'/g, "\\'");
-            return `<a class="file-link" href="#" onclick="openPath('${escaped}'); return false;" title="Open in file manager">${match}</a>`;
+            return `<a class="file-link" href="#" onclick="openPath('${escaped}'); return false;" title="파일 탐색기에서 열기">${match}</a>`;
         });
     }
     return html;
@@ -349,17 +349,17 @@ function addCodeCopyButtons(container) {
         if (pre.querySelector('.code-copy-btn')) continue;
         const btn = document.createElement('button');
         btn.className = 'code-copy-btn';
-        btn.textContent = 'copy';
+        btn.textContent = '복사';
         btn.onclick = async (e) => {
             e.stopPropagation();
             const code = pre.querySelector('code')?.textContent || pre.textContent;
             try {
                 await navigator.clipboard.writeText(code);
-                btn.textContent = 'copied!';
-                setTimeout(() => { btn.textContent = 'copy'; }, 1500);
+                btn.textContent = '복사됨!';
+                setTimeout(() => { btn.textContent = '복사'; }, 1500);
             } catch (err) {
-                btn.textContent = 'failed';
-                setTimeout(() => { btn.textContent = 'copy'; }, 1500);
+                btn.textContent = '실패';
+                setTimeout(() => { btn.textContent = '복사'; }, 1500);
             }
         };
         pre.style.position = 'relative';
@@ -453,7 +453,7 @@ function handleServerEvent(event) {
                 const choicesEl = existing.querySelector('.decision-choices');
                 const meta = updated.metadata || {};
                 if (choicesEl && meta.resolved) {
-                    choicesEl.innerHTML = `<div class="decision-resolved">You chose: <strong>${escapeHtml(meta.chosen || '')}</strong></div>`;
+                    choicesEl.innerHTML = `<div class="decision-resolved">선택함: <strong>${escapeHtml(meta.chosen || '')}</strong></div>`;
                 }
             }
         }
@@ -733,10 +733,10 @@ function formatDateDivider(dateStr) {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    if (date.toDateString() === today.toDateString()) return 'Today';
-    if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    if (date.toDateString() === today.toDateString()) return '오늘';
+    if (date.toDateString() === yesterday.toDateString()) return '어제';
 
-    return date.toLocaleDateString('en-GB', {
+    return date.toLocaleDateString('ko-KR', {
         weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
     });
 }
@@ -842,11 +842,11 @@ function appendMessage(msg, options = {}) {
     if (msg.type === 'join' || msg.type === 'leave') {
         el.classList.add('join-msg');
         const color = getColor(msg.sender);
-        el.innerHTML = `<span class="join-dot" style="background: ${color}"></span><span class="join-text"><strong style="color: ${color}">${escapeHtml(msg.sender)}</strong> ${msg.type === 'join' ? 'joined' : 'left'}</span>`;
+        el.innerHTML = `<span class="join-dot" style="background: ${color}"></span><span class="join-text"><strong style="color: ${color}">${escapeHtml(msg.sender)}</strong> ${msg.type === 'join' ? '입장' : '퇴장'}</span>`;
     } else if (msg.type === 'summary') {
         el.classList.add('summary-msg');
         const color = getColor(msg.sender);
-        el.innerHTML = `<div class="summary-card"><span class="summary-pill">Summary</span><span class="summary-author" style="color: ${color}">${escapeHtml(msg.sender)}</span><div class="summary-text">${escapeHtml(msg.text)}</div></div>`;
+        el.innerHTML = `<div class="summary-card"><span class="summary-pill">요약</span><span class="summary-author" style="color: ${color}">${escapeHtml(msg.sender)}</span><div class="summary-text">${escapeHtml(msg.text)}</div></div>`;
     } else if (msg.type === 'job_proposal') {
         el.classList.add('proposal-msg');
         const meta = msg.metadata || {};
@@ -861,22 +861,22 @@ function appendMessage(msg, options = {}) {
         el.innerHTML = `
             <div class="proposal-card ${isPending ? '' : 'proposal-resolved'}">
                 <div class="proposal-header">
-                    <span class="proposal-pill">Job Proposal</span>
+                    <span class="proposal-pill">작업 제안</span>
                     <span class="proposal-author" style="color: ${color}">${escapeHtml(msg.sender)}</span>
                 </div>
                 <div class="proposal-title">${title}</div>
                 ${body ? `<div class="proposal-body">${body}</div>` : ''}
                 ${isPending ? `
                     <div class="proposal-actions">
-                        <button class="proposal-accept" onclick="acceptProposal(${msg.id})">Accept</button>
-                        <button class="proposal-request-changes" onclick="requestChangesProposal(${msg.id})">Request Changes</button>
-                        <button class="proposal-dismiss" onclick="dismissProposal(${msg.id})">Dismiss</button>
+                        <button class="proposal-accept" onclick="acceptProposal(${msg.id})">승인</button>
+                        <button class="proposal-request-changes" onclick="requestChangesProposal(${msg.id})">수정 요청</button>
+                        <button class="proposal-dismiss" onclick="dismissProposal(${msg.id})">닫기</button>
                     </div>
                 ` : `
                     <div class="proposal-status-resolved">${status === 'accepted' ? 'Accepted' : 'Dismissed'}</div>
                 `}
             </div>
-            ${!isPending ? `<div class="msg-actions"><button class="reply-btn" onclick="startReply(${msg.id}, event)">reply</button><button class="delete-btn" onclick="deleteClick(${msg.id}, event)" title="Delete">del</button></div>` : ''}`;
+            ${!isPending ? `<div class="msg-actions"><button class="reply-btn" onclick="startReply(${msg.id}, event)">답장</button><button class="delete-btn" onclick="deleteClick(${msg.id}, event)" title="삭제">삭제</button></div>` : ''}`;
     } else if (msg.type === 'rule_proposal') {
         el.classList.add('proposal-msg');
         const meta = msg.metadata || {};
@@ -887,21 +887,21 @@ function appendMessage(msg, options = {}) {
         el.innerHTML = `
             <div class="proposal-card rule-proposal-card ${isPending ? '' : 'proposal-resolved'}">
                 <div class="proposal-header">
-                    <span class="proposal-pill rule-proposal-pill">Rule Proposal</span>
+                    <span class="proposal-pill rule-proposal-pill">규칙 제안</span>
                     <span class="proposal-author" style="color: ${color}">${escapeHtml(msg.sender)}</span>
                 </div>
                 <div class="rule-proposal-text">${ruleText}</div>
                 ${isPending ? `
                     <div class="proposal-actions">
-                        <button class="proposal-accept" onclick="resolveRuleProposal(${msg.id}, 'activate')">Activate</button>
-                        <button class="proposal-request-changes" onclick="resolveRuleProposal(${msg.id}, 'draft')">Add to drafts</button>
-                        <button class="proposal-dismiss" onclick="dismissRuleProposal(${msg.id})">Dismiss</button>
+                        <button class="proposal-accept" onclick="resolveRuleProposal(${msg.id}, 'activate')">활성화</button>
+                        <button class="proposal-request-changes" onclick="resolveRuleProposal(${msg.id}, 'draft')">초안에 추가</button>
+                        <button class="proposal-dismiss" onclick="dismissRuleProposal(${msg.id})">닫기</button>
                     </div>
                 ` : `
                     <div class="proposal-status-resolved">${status === 'activated' ? 'Activated' : status === 'drafted' ? 'Added to drafts' : 'Dismissed'}</div>
                 `}
             </div>
-            ${!isPending ? `<div class="msg-actions"><button class="reply-btn" onclick="startReply(${msg.id}, event)">reply</button><button class="delete-btn" onclick="deleteClick(${msg.id}, event)" title="Delete">del</button></div>` : ''}`;
+            ${!isPending ? `<div class="msg-actions"><button class="reply-btn" onclick="startReply(${msg.id}, event)">답장</button><button class="delete-btn" onclick="deleteClick(${msg.id}, event)" title="삭제">삭제</button></div>` : ''}`;
     } else if (window._messageRenderers && window._messageRenderers[msg.type]) {
         window._messageRenderers[msg.type](el, msg);
     } else if (msg.type === 'system' || msg.sender === 'system') {
@@ -962,21 +962,21 @@ function appendMessage(msg, options = {}) {
         el.dataset.rawText = msg.text;
         const senderRole = _agentRoles[msg.sender] || '';
         const roleClass = senderRole ? 'bubble-role has-role' : 'bubble-role';
-        const rolePillHtml = !isSelf ? `<button class="${roleClass}" onclick="showBubbleRolePicker(this, '${escapeHtml(msg.sender)}')" title="${senderRole ? escapeHtml(senderRole) : 'Set role'}">${senderRole || 'choose a role'}</button>` : '';
+        const rolePillHtml = !isSelf ? `<button class="${roleClass}" onclick="showBubbleRolePicker(this, '${escapeHtml(msg.sender)}')" title="${senderRole ? escapeHtml(senderRole) : '역할 지정'}">${senderRole || '역할 선택'}</button>` : '';
         // Inline decision choices (if present)
         let choicesHtml = '';
         const meta = msg.metadata || {};
         const choicesList = meta.choices || [];
         if (msg.type === 'decision' && choicesList.length > 0) {
             if (meta.resolved) {
-                choicesHtml = `<div class="decision-choices"><div class="decision-resolved">You chose: <strong>${escapeHtml(meta.chosen || '')}</strong></div></div>`;
+                choicesHtml = `<div class="decision-choices"><div class="decision-resolved">선택함: <strong>${escapeHtml(meta.chosen || '')}</strong></div></div>`;
             } else {
                 choicesHtml = '<div class="decision-choices">' + choicesList.map(c =>
                     `<button class="decision-choice" onclick="resolveDecision(${msg.id}, '${escapeHtml(c).replace(/'/g, "\\'")}')">${escapeHtml(c)}</button>`
                 ).join('') + '</div>';
             }
         }
-        el.innerHTML = `<div class="todo-strip"></div>${isSelf ? '' : avatarHtml}<div class="chat-bubble" style="--bubble-color: ${senderColor}">${replyHtml}<div class="bubble-header"><span class="msg-sender" style="color: ${senderColor}">${escapeHtml(msg.sender)}</span>${rolePillHtml}<span class="msg-time">${msg.time || ''}</span><span class="msg-num">#${msg.id}</span></div><div class="msg-text">${textHtml}</div>${choicesHtml}${attachmentsHtml}<button class="convert-job-pill" onclick="startJobFromMessage(${msg.id}); event.stopPropagation();" title="Convert to job">convert to job</button><button class="bubble-copy" onclick="copyMessage(${msg.id}, event)" title="Copy message"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div><div class="msg-actions"><button class="reply-btn" onclick="startReply(${msg.id}, event)">reply</button><button class="todo-hint" onclick="todoCycle(${msg.id}); event.stopPropagation();">${statusLabel}</button><button class="delete-btn" onclick="deleteClick(${msg.id}, event)" title="Delete">del</button></div>`;
+        el.innerHTML = `<div class="todo-strip"></div>${isSelf ? '' : avatarHtml}<div class="chat-bubble" style="--bubble-color: ${senderColor}">${replyHtml}<div class="bubble-header"><span class="msg-sender" style="color: ${senderColor}">${escapeHtml(msg.sender)}</span>${rolePillHtml}<span class="msg-time">${msg.time || ''}</span><span class="msg-num">#${msg.id}</span></div><div class="msg-text">${textHtml}</div>${choicesHtml}${attachmentsHtml}<button class="convert-job-pill" onclick="startJobFromMessage(${msg.id}); event.stopPropagation();" title="작업으로 전환">작업으로 전환</button><button class="bubble-copy" onclick="copyMessage(${msg.id}, event)" title="메시지 복사"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div><div class="msg-actions"><button class="reply-btn" onclick="startReply(${msg.id}, event)">답장</button><button class="todo-hint" onclick="todoCycle(${msg.id}); event.stopPropagation();">${statusLabel}</button><button class="delete-btn" onclick="deleteClick(${msg.id}, event)" title="삭제">삭제</button></div>`;
         if (todoStatus) el.classList.add('msg-todo', `msg-todo-${todoStatus}`);
         if (msg.metadata?.session_output) el.classList.add('session-output');
 
@@ -1374,8 +1374,8 @@ function showAgentNameModal(opts) {
                 <p class="agent-name-subtitle"></p>
                 <input type="text" class="agent-name-input" maxlength="24" spellcheck="false" autocomplete="off" />
                 <div class="agent-name-actions">
-                    <button class="agent-name-cancel">Cancel</button>
-                    <button class="agent-name-confirm">Confirm</button>
+                    <button class="agent-name-cancel">취소</button>
+                    <button class="agent-name-confirm">확인</button>
                 </div>
             </div>`;
         // Close on backdrop click
@@ -1402,11 +1402,11 @@ function showAgentNameModal(opts) {
 
     if (opts.mode === 'pending') {
         const familyLabel = (baseColors[opts.base] || {}).label || opts.base || 'agent';
-        titleEl.textContent = 'Name this agent';
-        subtitleEl.textContent = `A new ${familyLabel} instance connected`;
+        titleEl.textContent = '이 에이전트 이름 정하기';
+        subtitleEl.textContent = `새 ${familyLabel} 인스턴스가 연결되었습니다`;
     } else {
-        titleEl.textContent = 'Rename agent';
-        subtitleEl.textContent = `Current ID: @${opts.name}`;
+        titleEl.textContent = '에이전트 이름 변경';
+        subtitleEl.textContent = `현재 ID: @${opts.name}`;
     }
 
     inputEl.value = opts.label;
@@ -1475,21 +1475,21 @@ function showPillPopover(pillEl, opts) {
 
     popover.innerHTML = `
         <div class="pill-popover-section">
-            <label class="pill-popover-label">${opts.mode === 'pending' ? 'Name this agent' : 'Rename'}</label>
+            <label class="pill-popover-label">${opts.mode === 'pending' ? '이 에이전트 이름 정하기' : '이름 변경'}</label>
             <div class="pill-popover-rename-row">
                 <input type="text" class="pill-popover-input" value="${escapeHtml(opts.label)}" maxlength="24" spellcheck="false" />
-                <button class="pill-popover-confirm">${opts.mode === 'pending' ? 'Confirm' : 'Rename'}</button>
+                <button class="pill-popover-confirm">${opts.mode === 'pending' ? '확인' : '이름 변경'}</button>
             </div>
         </div>
         <div class="pill-popover-section">
-            <label class="pill-popover-label">Role</label>
+            <label class="pill-popover-label">역할</label>
             <div class="pill-popover-roles">
-                <button class="role-preset-chip pill-role-chip ${!currentRole ? 'active' : ''}" data-role="">None</button>
+                <button class="role-preset-chip pill-role-chip ${!currentRole ? 'active' : ''}" data-role="">없음</button>
                 ${roleChipsHtml}
                 ${customChipsHtml}
             </div>
             <div class="pill-popover-custom-row">
-                <input type="text" class="pill-popover-custom-input" placeholder="Custom role..." maxlength="20" />
+                <input type="text" class="pill-popover-custom-input" placeholder="직접 입력..." maxlength="20" />
             </div>
         </div>
         ${(() => {
@@ -1505,15 +1505,15 @@ function showPillPopover(pillEl, opts) {
             const matchesSwatch = swatches.some(c => current === c.toLowerCase());
             const colorInputVal = (current && !current.startsWith('var(')) ? current : (opts.color || '#888888');
             return `<div class="pill-popover-section">
-                <label class="pill-popover-label">Color</label>
+                <label class="pill-popover-label">색상</label>
                 <div class="pill-popover-colors">
                     ${swatches.map(c =>
                         `<button class="color-swatch ${current === c.toLowerCase() ? 'active' : ''}" data-color="${c}" style="background:${c}" title="${c}"></button>`
                     ).join('')}
                 </div>
                 <div class="pill-popover-color-custom">
-                    <input type="color" class="pill-popover-color-input ${!matchesSwatch ? 'active' : ''}" value="${colorInputVal}" title="Pick custom color" />
-                    <button class="pill-popover-color-reset" title="Reset to default">Reset</button>
+                    <input type="color" class="pill-popover-color-input ${!matchesSwatch ? 'active' : ''}" value="${colorInputVal}" title="색상 직접 고르기" />
+                    <button class="pill-popover-color-reset" title="기본값으로 되돌리기">초기화</button>
                 </div>
             </div>`;
         })()}
@@ -1697,7 +1697,7 @@ function showBubbleRolePicker(btn, agentName) {
     // None chip
     const noneChip = document.createElement('button');
     noneChip.className = 'role-preset-chip' + (!currentRole ? ' active' : '');
-    noneChip.textContent = 'None';
+    noneChip.textContent = '없음';
     noneChip.addEventListener('click', () => { _setRole(agentName, ''); closePicker(); });
     picker.appendChild(noneChip);
 
@@ -1725,7 +1725,7 @@ function showBubbleRolePicker(btn, agentName) {
     const customInput = document.createElement('input');
     customInput.type = 'text';
     customInput.className = 'bubble-role-input';
-    customInput.placeholder = 'Custom...';
+    customInput.placeholder = '직접 입력...';
     customInput.maxLength = 20;
     customInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
@@ -1787,7 +1787,7 @@ function _syncBubbleRolePills(agentName) {
         const btn = msg.querySelector('.bubble-role');
         if (!btn || !senderEl || senderEl.textContent !== agentName) return;
         btn.textContent = pillText;
-        btn.title = role || 'Set role';
+        btn.title = role || '역할 지정';
         btn.classList.toggle('has-role', !!role);
     });
 }
@@ -1966,7 +1966,7 @@ function _clearClearChatConfirm() {
     const confirmEl = document.getElementById('clear-chat-confirm');
     if (confirmEl) confirmEl.remove();
     if (btn) {
-        btn.textContent = 'Clear Chat';
+        btn.textContent = '대화 지우기';
         btn.classList.remove('confirming');
     }
     document.removeEventListener('click', _clearChatOutsideClick, true);
@@ -1996,17 +1996,17 @@ function clearChat() {
         return;
     }
 
-    btn.textContent = 'Clear Chat?';
+    btn.textContent = '대화를 지울까요?';
     btn.classList.add('confirming');
 
     const confirmWrap = document.createElement('span');
     confirmWrap.id = 'clear-chat-confirm';
     confirmWrap.className = 'session-inline-confirm';
     confirmWrap.innerHTML = `
-        <button class="session-inline-confirm-yes ch-confirm-yes" title="Confirm clear chat">
+        <button class="session-inline-confirm-yes ch-confirm-yes" title="대화 지우기 확인">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <button class="session-inline-confirm-no ch-confirm-no" title="Cancel">
+        <button class="session-inline-confirm-no ch-confirm-no" title="취소">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         </button>
     `;
@@ -2125,9 +2125,9 @@ async function exportHistory() {
         URL.revokeObjectURL(a.href);
         const counts = [];
         // Parse counts from manifest if possible, or just show success
-        showToast('History exported', 'success');
+        showToast('기록을 내보냈습니다', 'success');
     } catch (e) {
-        showToast('Export failed: ' + e.message, 'error');
+        showToast('내보내기 실패: ' + e.message, 'error');
     }
 }
 
@@ -2137,7 +2137,7 @@ async function importHistory(input) {
     input.value = ''; // Reset so same file can be picked again
     const btn = document.getElementById('import-history-btn');
     const origText = btn.textContent;
-    btn.textContent = 'Importing...';
+    btn.textContent = '가져오는 중...';
     btn.disabled = true;
     try {
         const formData = new FormData();
@@ -2155,19 +2155,19 @@ async function importHistory(input) {
         // Build result message
         const parts = [];
         const s = data.sections || {};
-        if (s.messages) parts.push(`${s.messages.created} messages`);
-        if (s.jobs) parts.push(`${s.jobs.created} jobs`);
-        if (s.rules) parts.push(`${s.rules.created} rules`);
-        if (s.summaries) parts.push(`${s.summaries.created + (s.summaries.updated || 0)} summaries`);
+        if (s.messages) parts.push(`메시지 ${s.messages.created}개`);
+        if (s.jobs) parts.push(`작업 ${s.jobs.created}개`);
+        if (s.rules) parts.push(`규칙 ${s.rules.created}개`);
+        if (s.summaries) parts.push(`요약 ${s.summaries.created + (s.summaries.updated || 0)}개`);
         const dupes = (s.messages?.duplicates || 0) + (s.jobs?.duplicates || 0) + (s.rules?.duplicates || 0);
-        let msg = 'Imported ' + parts.join(', ');
-        if (dupes > 0) msg += ` (${dupes} duplicates skipped)`;
+        let msg = '가져오기 완료: ' + parts.join(', ');
+        if (dupes > 0) msg += ` (중복 ${dupes}개 건너뜀)`;
         if (data.warnings && data.warnings.length > 0) {
-            msg += `. ${data.warnings.length} warning(s)`;
+            msg += `. 경고 ${data.warnings.length}개`;
         }
         showToast(msg, 'success');
     } catch (e) {
-        showToast('Import failed: ' + e.message, 'error');
+        showToast('가져오기 실패: ' + e.message, 'error');
     } finally {
         btn.textContent = origText;
         btn.disabled = false;
@@ -2212,16 +2212,16 @@ function showSlashHint(text) {
 }
 
 const SLASH_COMMANDS = [
-    { cmd: '/artchallenge', desc: 'SVG art challenge — all agents create artwork (optional theme)', broadcast: true },
-    { cmd: '/hatmaking', desc: 'All agents design a hat to wear on their avatar', broadcast: true },
-    { cmd: '/roastreview', desc: 'Get all agents to review and roast each other\'s work', broadcast: true },
-    { cmd: '/poetry haiku', desc: 'Agents write a haiku about the codebase', broadcast: true },
-    { cmd: '/poetry limerick', desc: 'Agents write a limerick about the codebase', broadcast: true },
-    { cmd: '/poetry sonnet', desc: 'Agents write a sonnet about the codebase', broadcast: true },
-    { cmd: '/summary', desc: 'Summarize recent messages — tag an agent (e.g. /summary @claude)', broadcast: false, needsMention: true },
-    { cmd: '/summarise', desc: 'Summarize recent messages — tag an agent (e.g. /summarise @claude)', broadcast: false, needsMention: true, hidden: true },
-    { cmd: '/continue', desc: 'Resume after loop guard pauses', broadcast: false },
-    { cmd: '/clear', desc: 'Clear messages in current channel', broadcast: false },
+    { cmd: '/artchallenge', desc: 'SVG 아트 챌린지 — 모든 에이전트가 작품을 만듭니다 (주제 선택 가능)', broadcast: true },
+    { cmd: '/hatmaking', desc: '모든 에이전트가 아바타에 쓸 모자를 디자인합니다', broadcast: true },
+    { cmd: '/roastreview', desc: '모든 에이전트가 서로의 작업을 리뷰하고 디스합니다', broadcast: true },
+    { cmd: '/poetry haiku', desc: '에이전트들이 코드베이스에 대한 하이쿠를 씁니다', broadcast: true },
+    { cmd: '/poetry limerick', desc: '에이전트들이 코드베이스에 대한 리머릭을 씁니다', broadcast: true },
+    { cmd: '/poetry sonnet', desc: '에이전트들이 코드베이스에 대한 소네트를 씁니다', broadcast: true },
+    { cmd: '/summary', desc: '최근 메시지 요약 — 에이전트를 태그하세요 (예: /summary @claude)', broadcast: false, needsMention: true },
+    { cmd: '/summarise', desc: '최근 메시지 요약 — 에이전트를 태그하세요 (예: /summarise @claude)', broadcast: false, needsMention: true, hidden: true },
+    { cmd: '/continue', desc: '루프 제한으로 멈춘 대화 재개', broadcast: false },
+    { cmd: '/clear', desc: '현재 채널의 메시지 지우기', broadcast: false },
 ];
 
 let slashMenuIndex = 0;
@@ -2287,7 +2287,7 @@ function getMentionCandidates() {
         if (cfg.state === 'pending') continue;
         candidates.push({ name, label: cfg.label || name, color: cfg.color });
     }
-    candidates.push({ name: 'all agents', label: 'all agents', color: 'var(--accent)' });
+    candidates.push({ name: 'all agents', label: '모든 에이전트', color: 'var(--accent)' });
     return candidates;
 }
 
@@ -2489,7 +2489,7 @@ function sendMessage() {
 
     if (channelUploads > 0 || (!text && pendingAttachments.length === 0)) return;
     if (!ws || ws.readyState !== WebSocket.OPEN) {
-        document.getElementById('attachment-status').textContent = 'Reconnecting. Your message has not been sent.';
+        document.getElementById('attachment-status').textContent = '다시 연결하는 중입니다. 메시지는 전송되지 않았습니다.';
         return;
     }
 
@@ -2508,7 +2508,7 @@ function sendMessage() {
             input.value = canonical + ' @';
             input.focus();
             input.setSelectionRange(input.value.length, input.value.length);
-            showSlashHint(`Tag an agent: ${canonical} @claude`);
+            showSlashHint(`에이전트를 태그하세요: ${canonical} @claude`);
             // Trigger mention autocomplete for the '@'
             input.dispatchEvent(new Event('input', { bubbles: true }));
             return;
@@ -2610,10 +2610,10 @@ function setupDragDrop() {
 
 async function uploadImage(file, channel = activeChannel) {
     const status = document.getElementById('attachment-status');
-    if (channel !== activeChannel) return `${file.name}: channel changed. Please attach the file again.`;
+    if (channel !== activeChannel) return `${file.name}: 채널이 바뀌었습니다. 파일을 다시 첨부하세요.`;
     channelUploads++;
     updateSendButton();
-    status.textContent = `Uploading ${file.name}…`;
+    status.textContent = `${file.name} 업로드 중…`;
     try {
         const data = await uploadAttachment(file);
         if (channel !== activeChannel) throw new Error('Channel changed. Please attach the file again.');
@@ -2759,7 +2759,7 @@ function renderReplyPreview() {
     }
     const truncated = replyingTo.text.length > 100 ? replyingTo.text.slice(0, 100) + '...' : replyingTo.text;
     const color = getColor(replyingTo.sender);
-    container.innerHTML = `<span class="reply-preview-label">replying to</span> <span style="color: ${color}; font-weight: 600">${escapeHtml(replyingTo.sender)}</span>: ${escapeHtml(truncated)} <button class="dismiss-btn reply-cancel" onclick="cancelReply()">&times;</button>`;
+    container.innerHTML = `<span class="reply-preview-label">답장 대상</span> <span style="color: ${color}; font-weight: 600">${escapeHtml(replyingTo.sender)}</span>: ${escapeHtml(truncated)} <button class="dismiss-btn reply-cancel" onclick="cancelReply()">&times;</button>`;
 }
 
 function cancelReply() {
@@ -2779,9 +2779,9 @@ function scrollToMessage(msgId) {
 // --- Todos ---
 
 function todoStatusLabel(status) {
-    if (!status) return 'pin';
-    if (status === 'todo') return 'done?';
-    return 'unpin';
+    if (!status) return '고정';
+    if (status === 'todo') return '완료?';
+    return '고정 해제';
 }
 
 function todoCycle(msgId) {
@@ -2933,7 +2933,7 @@ function showDeleteBar() {
     if (!bar) {
         bar = document.createElement('div');
         bar.id = 'delete-bar';
-        bar.innerHTML = `<button class="delete-bar-cancel" onclick="exitDeleteMode()">Cancel</button><span class="delete-bar-count"></span><button class="delete-bar-confirm" onclick="confirmDelete()">Delete</button>`;
+        bar.innerHTML = `<button class="delete-bar-cancel" onclick="exitDeleteMode()">취소</button><span class="delete-bar-count"></span><button class="delete-bar-confirm" onclick="confirmDelete()">삭제</button>`;
         const footer = document.querySelector('footer');
         footer.parentNode.insertBefore(bar, footer);
     }
@@ -2943,10 +2943,10 @@ function showDeleteBar() {
 function updateDeleteBar() {
     const count = deleteSelected.size;
     const span = document.querySelector('.delete-bar-count');
-    if (span) span.textContent = count > 0 ? `${count} selected` : 'Select messages';
+    if (span) span.textContent = count > 0 ? `${count}개 선택됨` : '메시지를 선택하세요';
     const btn = document.querySelector('.delete-bar-confirm');
     if (btn) {
-        btn.textContent = count > 0 ? `Delete (${count})` : 'Delete';
+        btn.textContent = count > 0 ? `삭제 (${count})` : '삭제';
         btn.disabled = count === 0;
     }
 }
@@ -3046,7 +3046,7 @@ function renderTodosPanel() {
 
     const todoIds = Object.keys(todos);
     if (todoIds.length === 0) {
-        list.innerHTML = '<div class="pins-empty">No pinned messages</div>';
+        list.innerHTML = '<div class="pins-empty">고정된 메시지가 없습니다</div>';
         return;
     }
 
@@ -3070,7 +3070,7 @@ function renderTodosPanel() {
         const checkClass = status === 'done' ? 'todo-check done' : 'todo-check';
         const msgChannel = el.dataset.channel || 'general';
 
-        item.innerHTML = `<button class="${checkClass}" onclick="todoToggle(${id})">${check}</button><span class="msg-time" style="color:var(--accent);font-weight:600;margin-right:4px">#${msgChannel}</span> <span class="msg-time">${escapeHtml(time)}</span> <span class="msg-sender" style="color: ${senderColor}">${escapeHtml(sender)}</span> <span class="msg-text">${escapeHtml(text)}</span><button class="dismiss-btn danger" onclick="todoRemove(${id})" title="Remove from todos">&times;</button>`;
+        item.innerHTML = `<button class="${checkClass}" onclick="todoToggle(${id})">${check}</button><span class="msg-time" style="color:var(--accent);font-weight:600;margin-right:4px">#${msgChannel}</span> <span class="msg-time">${escapeHtml(time)}</span> <span class="msg-sender" style="color: ${senderColor}">${escapeHtml(sender)}</span> <span class="msg-text">${escapeHtml(text)}</span><button class="dismiss-btn danger" onclick="todoRemove(${id})" title="할 일에서 제거">&times;</button>`;
         item.addEventListener('click', (e) => {
             if (e.target.closest('button')) return;
             // Cross-channel pin: switch channel if needed
@@ -3161,7 +3161,7 @@ function toggleVoice() {
         return;
     }
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        alert('Speech recognition not supported — use Chrome or Edge.');
+        alert('음성 인식을 지원하지 않습니다 — Chrome 또는 Edge를 사용하세요.');
         return;
     }
     if (!focusComposerInput()) return;
@@ -3228,7 +3228,7 @@ function startVoiceRecognition() {
             if (e.error === 'no-speech' || e.error === 'aborted') return;
             stopVoice();
             if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-                alert('Microphone access was blocked. Allow microphone access in Chrome and try again.');
+                alert('마이크 권한이 차단되었습니다. Chrome에서 마이크 권한을 허용한 뒤 다시 시도하세요.');
             } else {
                 console.error('Speech error:', e.error);
             }
@@ -3453,22 +3453,22 @@ function renderSchedulesBar() {
         const s = schedulesList[0];
         const isPaused = s.active === false;
         const targetStr = (s.targets || []).map(t => '@' + t).join(', ');
-        countEl.textContent = `${targetStr} "${s.prompt}"` + (isPaused ? ' (paused)' : '');
+        countEl.textContent = `${targetStr} "${s.prompt}"` + (isPaused ? ' (일시정지됨)' : '');
         const nextStr = (!isPaused && s.next_run) ? formatScheduleTime(s.next_run) : '';
         nextEl.textContent = nextStr
-            ? formatScheduleInterval(s) + ' -- next in ' + nextStr
+            ? formatScheduleInterval(s) + ' -- 다음 실행까지 ' + nextStr
             : formatScheduleInterval(s);
     } else if (active.length > 0) {
         const paused = schedulesList.length - active.length;
-        const parts = [`${active.length} active`];
-        if (paused > 0) parts.push(`${paused} paused`);
+        const parts = [`활성 ${active.length}개`];
+        if (paused > 0) parts.push(`일시정지 ${paused}개`);
         countEl.textContent = parts.join(', ');
         const futureRuns = active.filter(s => s.next_run && s.next_run * 1000 > Date.now()).map(s => s.next_run);
         const nextTimeStr = futureRuns.length > 0 ? formatScheduleTime(Math.min(...futureRuns)) : '';
-        nextEl.textContent = nextTimeStr ? 'next in ' + nextTimeStr : '';
+        nextEl.textContent = nextTimeStr ? '다음 실행까지 ' + nextTimeStr : '';
     } else {
         const paused = schedulesList.length;
-        countEl.textContent = `${paused} paused schedule${paused !== 1 ? 's' : ''}`;
+        countEl.textContent = `일시정지된 예약 ${paused}개`;
         nextEl.textContent = '';
     }
 
@@ -3483,13 +3483,13 @@ function renderSchedulesBar() {
         pauseBtn.innerHTML = isPaused
             ? '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M5 3l8 5-8 5V3z" fill="currentColor"/></svg>'
             : '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="4" y="3" width="3" height="10" rx="0.5" fill="currentColor"/><rect x="9" y="3" width="3" height="10" rx="0.5" fill="currentColor"/></svg>';
-        pauseBtn.title = isPaused ? 'Resume' : 'Pause';
+        pauseBtn.title = isPaused ? '재개' : '일시정지';
         pauseBtn.onclick = () => toggleSchedule(s.id);
 
         const trashBtn = document.createElement('button');
         trashBtn.className = 'schedule-delete-inline';
         trashBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M5.5 4V3a1 1 0 011-1h3a1 1 0 011 1v1M6 7v5M10 7v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4 4l.5 9a1 1 0 001 1h5a1 1 0 001-1L12 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-        trashBtn.title = 'Delete';
+        trashBtn.title = '삭제';
         trashBtn.onclick = () => deleteSchedule(s.id);
 
         summaryDiv.append(pauseBtn, trashBtn);
@@ -3497,7 +3497,7 @@ function renderSchedulesBar() {
         // Collapse expanded list — summary has everything
         bar.classList.remove('expanded');
         document.getElementById('schedules-list')?.classList.add('hidden');
-        if (seeAllLink) seeAllLink.textContent = 'See all';
+        if (seeAllLink) seeAllLink.textContent = '전체 보기';
     } else {
         if (seeAllLink) seeAllLink.style.display = '';
     }
@@ -3528,13 +3528,13 @@ function renderSchedulesBar() {
         const toggleBtn = document.createElement('button');
         toggleBtn.className = 'schedule-toggle';
         toggleBtn.textContent = s.active === false ? '▶' : '⏸';
-        toggleBtn.title = s.active === false ? 'Resume' : 'Pause';
+        toggleBtn.title = s.active === false ? '재개' : '일시정지';
         toggleBtn.onclick = () => toggleSchedule(s.id);
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'schedule-delete';
         deleteBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M5.5 4V3a1 1 0 011-1h3a1 1 0 011 1v1M6 7v5M10 7v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M4 4l.5 9a1 1 0 001 1h5a1 1 0 001-1L12 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-        deleteBtn.title = 'Delete';
+        deleteBtn.title = '삭제';
         deleteBtn.onclick = () => deleteSchedule(s.id);
 
         row.append(targets, prompt, interval, toggleBtn, deleteBtn);
@@ -3558,26 +3558,26 @@ function formatScheduleTime(ts) {
 }
 
 function formatOneShotWhen(ts) {
-    if (!ts) return 'once';
+    if (!ts) return '1회';
     const d = new Date(ts * 1000);
     const time = d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    if (d.toDateString() === today.toDateString()) return 'once at ' + time;
-    if (d.toDateString() === tomorrow.toDateString()) return 'once tomorrow at ' + time;
+    if (d.toDateString() === today.toDateString()) return '오늘 ' + time + ' 1회';
+    if (d.toDateString() === tomorrow.toDateString()) return '내일 ' + time + ' 1회';
     const day = d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-    return 'once on ' + day + ' at ' + time;
+    return day + ' ' + time + ' 1회';
 }
 
 function formatScheduleInterval(s) {
     // A one-shot has no recurrence; its next_run is the whole story.
     if (s.one_shot) return formatOneShotWhen(s.next_run);
-    if (s.daily_at) return 'daily at ' + s.daily_at;
+    if (s.daily_at) return '매일 ' + s.daily_at;
     const sec = s.interval_seconds || 0;
-    if (sec < 3600) return 'every ' + Math.round(sec / 60) + 'm';
-    if (sec < 86400) return 'every ' + Math.round(sec / 3600) + 'h';
-    return 'every ' + Math.round(sec / 86400) + 'd';
+    if (sec < 3600) return Math.round(sec / 60) + '분마다';
+    if (sec < 86400) return Math.round(sec / 3600) + '시간마다';
+    return Math.round(sec / 86400) + '일마다';
 }
 
 function toggleSchedulesExpand() {
@@ -3587,7 +3587,7 @@ function toggleSchedulesExpand() {
     const expanded = bar.classList.toggle('expanded');
     list.classList.toggle('hidden', !expanded);
     const link = bar.querySelector('.schedules-see-all');
-    if (link) link.textContent = expanded ? 'Hide' : 'See all';
+    if (link) link.textContent = expanded ? '숨기기' : '전체 보기';
 }
 
 async function toggleSchedule(id) {
@@ -3736,7 +3736,7 @@ function populateScheduleDropdowns() {
 
     // Date options: Today, Tomorrow, then next 5 weekdays
     dateEl.innerHTML = '';
-    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const days = ['일요일','월요일','화요일','수요일','목요일','금요일','토요일'];
     const now = new Date();
     for (let i = 0; i < 7; i++) {
         const d = new Date(now);
@@ -3749,7 +3749,7 @@ function populateScheduleDropdowns() {
         opt.value = d.getFullYear() + '-' +
             String(d.getMonth() + 1).padStart(2, '0') + '-' +
             String(d.getDate()).padStart(2, '0');
-        opt.textContent = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : days[d.getDay()];
+        opt.textContent = i === 0 ? '오늘' : i === 1 ? '내일' : days[d.getDay()];
         dateEl.appendChild(opt);
     }
 
@@ -3821,15 +3821,15 @@ function updateSchedulePopoverState() {
 
     let problem = '';
     if (targets.size === 0) {
-        problem = 'Toggle an agent to set a target';
+        problem = '대상 에이전트를 하나 이상 켜세요';
     } else if (isSchedulePopoverRelative()) {
         if (getScheduleRelativeSeconds() <= 0) {
-            problem = 'Set how long from now';
+            problem = '지금부터 얼마 후인지 정하세요';
         }
     } else if (!isSchedulePopoverRecurring()) {
         const sendAt = getScheduleSendAtMs();
         if (sendAt !== null && sendAt <= Date.now()) {
-            problem = 'That time has already passed';
+            problem = '이미 지난 시각입니다';
         }
     }
 
@@ -3860,13 +3860,13 @@ async function submitSchedulePopover() {
         // has run since the composer last changed, so this is reachable and
         // used to look like the click did nothing at all.
         if (errEl) {
-            errEl.textContent = 'Toggle an agent to set a target';
+            errEl.textContent = '대상 에이전트를 하나 이상 켜세요';
             errEl.classList.remove('hidden');
         }
         return;
     }
     if (!prompt) {
-        if (errEl) { errEl.textContent = 'Type a message first'; errEl.classList.remove('hidden'); }
+        if (errEl) { errEl.textContent = '먼저 메시지를 입력하세요'; errEl.classList.remove('hidden'); }
         return;
     }
 
@@ -3886,7 +3886,7 @@ async function submitSchedulePopover() {
     } else if (relative) {
         const secs = getScheduleRelativeSeconds();
         if (secs <= 0) {
-            if (errEl) { errEl.textContent = 'Set how long from now'; errEl.classList.remove('hidden'); }
+            if (errEl) { errEl.textContent = '지금부터 얼마 후인지 정하세요'; errEl.classList.remove('hidden'); }
             return;
         }
         const h = Math.floor(secs / 3600);
@@ -3899,7 +3899,7 @@ async function submitSchedulePopover() {
         confirmText = `${dateVal} at ${timeVal}`;
         const sendAtMs = getScheduleSendAtMs();
         if (sendAtMs === null || sendAtMs <= Date.now()) {
-            if (errEl) { errEl.textContent = 'That time has already passed'; errEl.classList.remove('hidden'); }
+            if (errEl) { errEl.textContent = '이미 지난 시각입니다'; errEl.classList.remove('hidden'); }
             return;
         }
         // Post the resolved moment rather than a date string for the server to
@@ -4018,90 +4018,90 @@ function _helpCardDefs() {
             anchor: '#agent-status',
             row: 'top',
             html:
-            '<div class="hg-module-title">Agents <span class="hg-loc">header pills</span></div>' +
-            '<p class="hg-module-desc">The status pills in the header show who is here and what they\'re doing.</p>' +
+            '<div class="hg-module-title">에이전트 <span class="hg-loc">상단 상태 표시</span></div>' +
+            '<p class="hg-module-desc">상단의 상태 표시로 누가 접속해 있고 무엇을 하는지 볼 수 있습니다.</p>' +
             '<div class="hg-mock-row">' +
                 '<div class="hg-mock-pill hg-pill-available">' +
                     '<span class="hg-mock-dot" style="background:#f97316"></span>' +
                     '<span style="color:#f97316">claude</span>' +
                 '</div>' +
-                '<span class="hg-mock-label">Online</span>' +
+                '<span class="hg-mock-label">온라인</span>' +
             '</div>' +
             '<div class="hg-mock-row">' +
                 '<div class="hg-mock-pill hg-pill-working">' +
                     '<span class="hg-mock-dot" style="background:#4ade80"></span>' +
                     '<span style="color:#34d399">codex</span>' +
                 '</div>' +
-                '<span class="hg-mock-label">Working &mdash; spinning border</span>' +
+                '<span class="hg-mock-label">작업 중 &mdash; 테두리가 회전</span>' +
             '</div>' +
             '<div class="hg-mock-row">' +
                 '<div class="hg-mock-pill hg-pill-offline">' +
                     '<span class="hg-mock-dot" style="background:#555"></span>' +
                     '<span style="color:#555">gemini</span>' +
                 '</div>' +
-                '<span class="hg-mock-label">Offline</span>' +
+                '<span class="hg-mock-label">오프라인</span>' +
             '</div>' +
-            '<p class="hg-module-tip">Click any pill to rename it, assign a role, or change its colour.</p>'
+            '<p class="hg-module-tip">상태 표시를 클릭하면 이름 변경, 역할 지정, 색상 변경을 할 수 있습니다.</p>'
         },
         {
             id: 'hg-jobs',
             anchor: '#jobs-toggle',
             row: 'top',
             html:
-            '<div class="hg-module-title">Jobs <span class="hg-loc">hover any message + sidebar</span></div>' +
-            '<p class="hg-module-desc">Jobs turn conversation into tracked work. Any message can become a job.</p>' +
+            '<div class="hg-module-title">작업 <span class="hg-loc">메시지에 마우스 올리기 + 사이드바</span></div>' +
+            '<p class="hg-module-desc">작업은 대화를 추적 가능한 일로 바꿉니다. 어떤 메시지든 작업이 될 수 있습니다.</p>' +
             '<div class="hg-mock-message">' +
                 '<div class="hg-mock-avatar" style="background:#f97316"></div>' +
                 '<div class="hg-mock-msg-body">' +
                     '<span class="hg-mock-sender" style="color:#f97316">claude</span>' +
-                    '<span class="hg-mock-text">The auth module needs refactoring before we can add SSO support.</span>' +
+                    '<span class="hg-mock-text">SSO 지원을 추가하기 전에 인증 모듈을 리팩터링해야 합니다.</span>' +
                 '</div>' +
-                '<span class="hg-mock-convert-pill">convert to job</span>' +
+                '<span class="hg-mock-convert-pill">작업으로 전환</span>' +
             '</div>' +
-            '<p class="hg-module-tip">Hover any message to see <strong>convert to job</strong>. This opens the Jobs sidebar.</p>' +
+            '<p class="hg-module-tip">메시지에 마우스를 올리면 <strong>작업으로 전환</strong>이 보입니다. 누르면 작업 사이드바가 열립니다.</p>' +
             '<div class="hg-mock-panel">' +
                 '<div class="hg-mock-panel-header">' +
-                    '<span>Jobs sidebar</span>' +
+                    '<span>작업 사이드바</span>' +
                     '<span class="hg-mock-panel-add">+</span>' +
                 '</div>' +
                 '<div class="hg-mock-job-card">' +
                     '<span class="hg-mock-job-dot" style="background:#6a6a80"></span>' +
-                    '<span class="hg-mock-job-title">Auth refactor</span>' +
+                    '<span class="hg-mock-job-title">인증 리팩터링</span>' +
                     '<div class="hg-mock-job-toggles">' +
-                        '<span class="hg-mock-toggle hg-toggle-open active">TO DO</span>' +
-                        '<span class="hg-mock-toggle hg-toggle-done">ACTIVE</span>' +
-                        '<span class="hg-mock-toggle hg-toggle-archived">CLOSED</span>' +
+                        '<span class="hg-mock-toggle hg-toggle-open active">할 일</span>' +
+                        '<span class="hg-mock-toggle hg-toggle-done">진행 중</span>' +
+                        '<span class="hg-mock-toggle hg-toggle-archived">종료됨</span>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
-            '<p class="hg-module-tip">Jobs live in the sidebar. Each one opens its own thread, and you can track it from TO DO to ACTIVE to CLOSED.</p>'
+            '<p class="hg-module-tip">작업은 사이드바에 있습니다. 작업마다 스레드가 따로 열리고, 할 일 → 진행 중 → 종료됨으로 추적할 수 있습니다.</p>'
         },
         {
             id: 'hg-rules',
             anchor: '#rules-toggle',
             row: 'top',
             html:
-            '<div class="hg-module-title">Rules <span class="hg-loc">top-right panel</span></div>' +
-            '<p class="hg-module-desc">Rules tell agents how to work in this room. Active rules are followed automatically.</p>' +
+            '<div class="hg-module-title">규칙 <span class="hg-loc">오른쪽 위 패널</span></div>' +
+            '<p class="hg-module-desc">규칙은 이 방에서 에이전트가 일하는 방식을 정합니다. 활성 규칙은 자동으로 지켜집니다.</p>' +
             '<div class="hg-mock-panel">' +
                 '<div class="hg-mock-panel-header">' +
-                    '<span>Rules</span>' +
+                    '<span>규칙</span>' +
                     '<span class="hg-mock-panel-counter">2</span>' +
                     '<span class="hg-mock-panel-add">+</span>' +
                 '</div>' +
                 '<div class="hg-mock-rule-card">' +
                     '<span class="hg-mock-rule-dot draft"></span>' +
-                    '<span class="hg-mock-rule-text">Run tests before committing</span>' +
-                    '<span class="hg-mock-rule-badge">draft</span>' +
+                    '<span class="hg-mock-rule-text">커밋 전에 테스트 실행</span>' +
+                    '<span class="hg-mock-rule-badge">초안</span>' +
                 '</div>' +
                 '<div class="hg-mock-rule-card">' +
                     '<span class="hg-mock-rule-dot active"></span>' +
-                    '<span class="hg-mock-rule-text">Always explain your reasoning before making changes</span>' +
+                    '<span class="hg-mock-rule-text">변경하기 전에 항상 이유를 설명</span>' +
                 '</div>' +
             '</div>' +
-            '<p class="hg-module-tip"><span class="hg-mock-rule-dot active" style="display:inline-block;vertical-align:middle;margin-top:0;margin-right:4px"></span> <strong>Active</strong> = agents follow this. ' +
-            '<span class="hg-mock-rule-dot draft" style="display:inline-block;vertical-align:middle;margin-top:0;margin-left:4px;margin-right:4px"></span> <strong>Draft</strong> = not active yet. ' +
-            'You or agents can add rules.</p>'
+            '<p class="hg-module-tip"><span class="hg-mock-rule-dot active" style="display:inline-block;vertical-align:middle;margin-top:0;margin-right:4px"></span> <strong>활성</strong> = 에이전트가 따릅니다. ' +
+            '<span class="hg-mock-rule-dot draft" style="display:inline-block;vertical-align:middle;margin-top:0;margin-left:4px;margin-right:4px"></span> <strong>초안</strong> = 아직 비활성입니다. ' +
+            '사용자나 에이전트가 규칙을 추가할 수 있습니다.</p>'
         },
         {
             id: 'hg-channels',
@@ -4110,15 +4110,15 @@ function _helpCardDefs() {
             light: true,
             wide: true,
             html:
-            '<div class="hg-module-title">Channels <span class="hg-loc">top bar</span></div>' +
-            '<p class="hg-module-desc">Split conversations by topic. Each channel has its own message history.</p>' +
+            '<div class="hg-module-title">채널 <span class="hg-loc">상단 바</span></div>' +
+            '<p class="hg-module-desc">주제별로 대화를 나눕니다. 채널마다 메시지 기록이 따로 있습니다.</p>' +
             '<div class="hg-mock-channels">' +
                 '<span class="hg-mock-ch active"># general</span>' +
                 '<span class="hg-mock-ch"># design</span>' +
                 '<span class="hg-mock-ch"># backend</span>' +
                 '<span class="hg-mock-ch-add">+</span>' +
             '</div>' +
-            '<p class="hg-module-tip">Click <strong>+</strong> to create a new channel. Agents can be mentioned in any channel.</p>'
+            '<p class="hg-module-tip"><strong>+</strong>를 눌러 새 채널을 만드세요. 어느 채널에서든 에이전트를 멘션할 수 있습니다.</p>'
         },
         {
             id: 'hg-mentions',
@@ -4126,62 +4126,62 @@ function _helpCardDefs() {
             row: 'bottom',
             light: true,
             html:
-            '<div class="hg-module-title">Mentions <span class="hg-loc">pills above composer</span></div>' +
-            '<p class="hg-module-desc">Type <strong>@</strong> in the composer to mention an agent. The pills above the input let you pre-select who to address. Selected agents are mentioned automatically when you send.</p>' +
-            '<p class="hg-module-tip">Mentioned agents receive a trigger and will respond in the channel.</p>'
+            '<div class="hg-module-title">멘션 <span class="hg-loc">입력창 위 버튼</span></div>' +
+            '<p class="hg-module-desc">입력창에 <strong>@</strong>를 입력하면 에이전트를 멘션할 수 있습니다. 입력창 위 버튼으로 받을 대상을 미리 고를 수 있고, 보낼 때 선택한 에이전트가 자동으로 멘션됩니다.</p>' +
+            '<p class="hg-module-tip">멘션된 에이전트는 호출을 받고 채널에 답합니다.</p>'
         },
         {
             id: 'hg-sessions',
             anchor: '#session-launch-btn',
             row: 'bottom',
             html:
-            '<div class="hg-module-title">Sessions <span class="hg-loc">play button</span></div>' +
-            '<p class="hg-module-desc">Sessions are structured multi-agent workflows with phases and roles. Launch one to coordinate agents on a shared goal.</p>' +
+            '<div class="hg-module-title">세션 <span class="hg-loc">재생 버튼</span></div>' +
+            '<p class="hg-module-desc">세션은 단계와 역할이 있는 여러 에이전트용 작업 흐름입니다. 공동 목표를 위해 에이전트들을 조율할 때 시작하세요.</p>' +
             '<div class="hg-mock-sessions">' +
                 '<div class="hg-mock-session-card">' +
                     '<span class="hg-mock-session-icon">&#9654;</span>' +
                     '<div class="hg-mock-session-info">' +
-                        '<span class="hg-mock-session-name">Brainstorm</span>' +
-                        '<span class="hg-mock-session-desc">Free-form idea generation with all agents</span>' +
+                        '<span class="hg-mock-session-name">브레인스토밍</span>' +
+                        '<span class="hg-mock-session-desc">모든 에이전트와 자유롭게 아이디어 내기</span>' +
                     '</div>' +
                 '</div>' +
                 '<div class="hg-mock-session-card">' +
                     '<span class="hg-mock-session-icon">&#9654;</span>' +
                     '<div class="hg-mock-session-info">' +
-                        '<span class="hg-mock-session-name">Code Review</span>' +
-                        '<span class="hg-mock-session-desc">Structured review with phases and roles</span>' +
+                        '<span class="hg-mock-session-name">코드 리뷰</span>' +
+                        '<span class="hg-mock-session-desc">단계와 역할이 있는 구조화된 리뷰</span>' +
                     '</div>' +
                 '</div>' +
                 '<div class="hg-mock-session-card">' +
                     '<span class="hg-mock-session-icon">&#9654;</span>' +
                     '<div class="hg-mock-session-info">' +
-                        '<span class="hg-mock-session-name">Design Review</span>' +
-                        '<span class="hg-mock-session-desc">Critique and iterate on design decisions</span>' +
+                        '<span class="hg-mock-session-name">디자인 리뷰</span>' +
+                        '<span class="hg-mock-session-desc">디자인 결정을 비평하고 다듬기</span>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
             '<div class="hg-custom-session">' +
-                '<strong>Custom sessions</strong> &mdash; describe a goal and agents will organise themselves into a structured workflow.' +
+                '<strong>맞춤 세션</strong> &mdash; 목표를 설명하면 에이전트들이 스스로 작업 흐름을 짭니다.' +
             '</div>' +
-            '<p class="hg-module-tip">Click the <strong>&#9654; play button</strong> next to the composer to start.</p>'
+            '<p class="hg-module-tip">입력창 옆 <strong>&#9654; 재생 버튼</strong>을 눌러 시작하세요.</p>'
         },
         {
             id: 'hg-scheduling',
             anchor: '#schedule-btn',
             row: 'bottom',
             html:
-            '<div class="hg-module-title">Scheduling <span class="hg-loc">clock button</span></div>' +
-            '<p class="hg-module-desc">Schedule any message for later delivery, or set up recurring prompts on a timer.</p>' +
+            '<div class="hg-module-title">예약 <span class="hg-loc">시계 버튼</span></div>' +
+            '<p class="hg-module-desc">메시지를 나중에 보내도록 예약하거나, 정해진 주기로 반복 전송할 수 있습니다.</p>' +
             '<div class="hg-mock-sched-entry">' +
-                '<span class="hg-sched-time">3:00 PM</span>' +
-                '<span style="flex:1;color:var(--text)">@codex check deployment status</span>' +
-                '<span class="hg-sched-recur">every 1h</span>' +
+                '<span class="hg-sched-time">오후 3:00</span>' +
+                '<span style="flex:1;color:var(--text)">@codex 배포 상태 확인</span>' +
+                '<span class="hg-sched-recur">1시간마다</span>' +
             '</div>' +
             '<div class="hg-mock-sched-entry">' +
-                '<span class="hg-sched-time">Tomorrow 9 AM</span>' +
-                '<span style="flex:1;color:var(--text)">@claude summarise overnight changes</span>' +
+                '<span class="hg-sched-time">내일 오전 9시</span>' +
+                '<span style="flex:1;color:var(--text)">@claude 밤사이 변경사항 요약</span>' +
             '</div>' +
-            '<p class="hg-module-tip">Click the <strong>&#9201; clock button</strong> next to Send to schedule a one-time or recurring message.</p>'
+            '<p class="hg-module-tip">보내기 옆 <strong>&#9201; 시계 버튼</strong>을 눌러 1회 또는 반복 메시지를 예약하세요.</p>'
         }
     ];
 }
@@ -4291,7 +4291,7 @@ function _openHelpAnchored(cardDefs) {
     // Dismiss hint
     var hint = document.createElement('div');
     hint.className = 'hg-dismiss-hint';
-    hint.textContent = 'Press Esc or click outside to close';
+    hint.textContent = 'Esc를 누르거나 바깥을 클릭하면 닫힙니다';
     overlay.appendChild(hint);
 
     document.body.appendChild(overlay);
@@ -4413,7 +4413,7 @@ function _openHelpStacked(cardDefs) {
     // Sticky header
     var header = document.createElement('div');
     header.className = 'hg-modal-header';
-    header.innerHTML = '<span class="hg-modal-title">Guide</span>';
+    header.innerHTML = '<span class="hg-modal-title">가이드</span>';
     var closeBtn = document.createElement('button');
     closeBtn.className = 'hg-modal-close';
     closeBtn.innerHTML = '&times;';

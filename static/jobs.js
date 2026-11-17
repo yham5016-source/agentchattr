@@ -54,9 +54,9 @@ window._messageRenderers['job_created'] = function (el, msg) {
         el.dataset.hiddenReason = 'no-job-data';
     }
     if (actId) {
-        el.innerHTML = `<span class="job-breadcrumb-link" onclick="openJobFromBreadcrumb(${actId})" title="Open job">
+        el.innerHTML = `<span class="job-breadcrumb-link" onclick="openJobFromBreadcrumb(${actId})" title="작업 열기">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="vertical-align:-2px;margin-right:4px;opacity:0.6"><rect x="2" y="1" width="5" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="8" width="5" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
-            New job: <em>${window.escapeHtml(msg.text.replace('Job created: ', ''))}</em></span>`;
+            새 작업: <em>${window.escapeHtml(msg.text.replace('Job created: ', ''))}</em></span>`;
     } else {
         el.innerHTML = `<span class="msg-text">${window.escapeHtml(msg.text)}</span>`;
     }
@@ -321,10 +321,10 @@ function updateJobReplyTargetUI() {
     if (selected) {
         dot.style.background = selected.color || 'var(--accent)';
         nameEl.textContent = selected.label || selected.name;
-        btn.title = `Reply target: ${selected.label || selected.name} (Tab to cycle)`;
+        btn.title = `답장 대상: ${selected.label || selected.name} (Tab으로 전환)`;
     } else {
         nameEl.textContent = 'none';
-        btn.title = 'Reply target: none (Tab to choose)';
+        btn.title = '답장 대상: 없음 (Tab으로 선택)';
     }
     btn.classList.toggle('no-target', !selected);
     clearBtn.classList.toggle('hidden', !selected);
@@ -587,9 +587,9 @@ function renderJobsList() {
 
     // Group by status: open first, then done, then archived
     const groups = [
-        { key: 'open', label: 'TO DO', items: [] },
-        { key: 'done', label: 'ACTIVE', items: [] },
-        { key: 'archived', label: 'CLOSED', items: [] },
+        { key: 'open', label: '할 일', items: [] },
+        { key: 'done', label: '진행 중', items: [] },
+        { key: 'archived', label: '종료됨', items: [] },
     ];
     for (const a of channelJobs) {
         const g = groups.find(g => g.key === a.status);
@@ -601,8 +601,8 @@ function renderJobsList() {
         const ghost = document.createElement('div');
         ghost.className = 'sb-ghost-card';
         ghost.innerHTML = `
-            <div class="sb-ghost-title">Create your first job</div>
-            <div class="sb-ghost-meta">Track work items with threaded conversations. Use @mentions to loop in agents.</div>
+            <div class="sb-ghost-title">첫 작업을 만들어 보세요</div>
+            <div class="sb-ghost-meta">작업별 대화 스레드로 할 일을 추적하세요. @멘션으로 에이전트를 불러올 수 있습니다.</div>
         `;
         ghost.onclick = () => {
             const btn = document.querySelector('.jobs-create-btn');
@@ -686,7 +686,7 @@ function renderJobsList() {
             const unread = jobUnread[a.id] || 0;
 
             const unreadHtml = unread > 0
-                ? `<span class="job-unread-dot" title="Unread messages">${unread > 99 ? '99+' : unread}</span>`
+                ? `<span class="job-unread-dot" title="읽지 않은 메시지">${unread > 99 ? '99+' : unread}</span>`
                 : '';
 
             card.innerHTML = `
@@ -733,7 +733,7 @@ function renderJobsList() {
                     if (trash) {
                         trash.classList.add('drop-ready');
                         const hint = trash.querySelector('.archive-trash-hint');
-                        if (hint) hint.textContent = ids.length > 1 ? `Drop to delete ${ids.length} jobs` : 'Drop to delete job';
+                        if (hint) hint.textContent = ids.length > 1 ? `놓으면 작업 ${ids.length}개 삭제` : '놓으면 작업 삭제';
                     }
                 } else {
                     itemsContainer.classList.add('job-reorder-active');
@@ -829,7 +829,7 @@ function renderJobsList() {
         if (group.key === 'archived' && group.items.length > 0) {
             const trashZone = document.createElement('div');
             trashZone.className = 'archive-trash-zone visible';
-            trashZone.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V3h4v1M5 4v8.5h6V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="archive-trash-hint">Drag here to delete</span>`;
+            trashZone.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V3h4v1M5 4v8.5h6V4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="archive-trash-hint">여기로 끌어서 삭제</span>`;
 
             // Click to delete selected items
             trashZone.addEventListener('click', async () => {
@@ -925,12 +925,12 @@ async function openJobConversation(jobId) {
     if (msgCount === 0 && target) {
         const starterText = `@${target} start this job`;
         jobInput.value = starterText;
-        jobInput.placeholder = 'Send to assign · click to edit';
+        jobInput.placeholder = '보내면 배정 · 클릭해서 수정';
         jobInput.classList.add('job-starter-prefill');
         const clearStarter = () => {
             if (jobInput.classList.contains('job-starter-prefill')) {
                 jobInput.value = '';
-                jobInput.placeholder = 'Message...';
+                jobInput.placeholder = '메시지...';
                 jobInput.classList.remove('job-starter-prefill');
             }
             jobInput.removeEventListener('focus', clearStarter);
@@ -939,7 +939,7 @@ async function openJobConversation(jobId) {
         jobInput.addEventListener('focus', clearStarter);
         jobInput.addEventListener('click', clearStarter);
     } else {
-        jobInput.placeholder = 'Message...';
+        jobInput.placeholder = '메시지...';
         jobInput.classList.remove('job-starter-prefill');
         jobInput.focus();
     }
@@ -962,7 +962,7 @@ async function loadJobMessages(jobId) {
             const convView = document.getElementById('jobs-conversation-view');
             const hasBrief = !!convView.querySelector('.job-brief-card');
             if (!hasBrief) {
-                container.innerHTML = '<div class="jobs-empty" style="font-size:12px; padding:16px">No messages yet. Start the conversation!</div>';
+                container.innerHTML = '<div class="jobs-empty" style="font-size:12px; padding:16px">아직 메시지가 없습니다. 대화를 시작해 보세요!</div>';
             }
             return msgs;
         }
@@ -975,7 +975,7 @@ async function loadJobMessages(jobId) {
         container.scrollTop = container.scrollHeight;
         return msgs;
     } catch (e) {
-        container.innerHTML = '<div class="jobs-empty">Failed to load messages.</div>';
+        container.innerHTML = '<div class="jobs-empty">메시지를 불러오지 못했습니다.</div>';
         return [];
     }
 }
@@ -1017,7 +1017,7 @@ function _animateRemoveJobMessage(msgEl) {
 function _renderJobMsgDeleteDefault(actions, jobId, msgId) {
     if (!actions) return;
     actions.classList.remove('confirming');
-    actions.innerHTML = `<button class="job-msg-del-btn" onclick="startDeleteJobMessage(${jobId}, ${msgId})">DEL</button>`;
+    actions.innerHTML = `<button class="job-msg-del-btn" onclick="startDeleteJobMessage(${jobId}, ${msgId})">삭제</button>`;
 }
 
 function startDeleteJobMessage(jobId, msgId, event) {
@@ -1039,9 +1039,9 @@ function startDeleteJobMessage(jobId, msgId, event) {
 
     actions.classList.add('confirming');
     actions.innerHTML = `
-        <span class="job-msg-delete-label">Delete?</span>
-        <button class="job-msg-confirm-yes" onclick="confirmDeleteJobMessage(${jobId}, ${msgId})">Yes</button>
-        <button class="job-msg-confirm-no" onclick="cancelDeleteJobMessage(${jobId}, ${msgId})">No</button>
+        <span class="job-msg-delete-label">삭제할까요?</span>
+        <button class="job-msg-confirm-yes" onclick="confirmDeleteJobMessage(${jobId}, ${msgId})">예</button>
+        <button class="job-msg-confirm-no" onclick="cancelDeleteJobMessage(${jobId}, ${msgId})">아니오</button>
     `;
     _clearJobMsgDeleteTimer(jobId, msgId);
     const key = `${jobId}:${msgId}`;
@@ -1095,14 +1095,14 @@ function appendJobMessage(msg) {
     const msgId = Number(msg.id);
     const canDelete = Number.isFinite(msgId);
     const deleteActionHtml = canDelete
-        ? `<div class="job-msg-actions"><button class="job-msg-del-btn" onclick="startDeleteJobMessage(${activeJobId}, ${msgId})">DEL</button></div>`
+        ? `<div class="job-msg-actions"><button class="job-msg-del-btn" onclick="startDeleteJobMessage(${activeJobId}, ${msgId})">삭제</button></div>`
         : '';
 
     if (msg.type === 'suggestion') {
         const resolved = msg.resolved;
         div.innerHTML = `
             <div class="job-msg-header">
-                <span class="suggestion-pill">Suggestion</span>
+                <span class="suggestion-pill">제안</span>
                 <span class="job-msg-sender" style="color: ${senderColor}">${window.escapeHtml(msg.sender)}</span>
                 <span class="job-msg-time">${msg.time || ''}</span>
                 ${deleteActionHtml}
@@ -1179,14 +1179,14 @@ async function sendJobMessage() {
 
 async function uploadJobImage(file, jobId = activeJobId) {
     if (!activeJobId) return;
-    if (jobId !== activeJobId) return `${file.name}: job changed. Please attach the file again.`;
+    if (jobId !== activeJobId) return `${file.name}: 작업이 바뀌었습니다. 파일을 다시 첨부하세요.`;
     const status = document.getElementById('job-attachment-status');
     jobUploads++;
     document.getElementById('job-send').disabled = true;
-    status.textContent = `Uploading ${file.name}…`;
+    status.textContent = `${file.name} 업로드 중…`;
     try {
         const data = await uploadAttachment(file);
-        if (jobId !== activeJobId) throw new Error('Job changed. Please attach the file again.');
+        if (jobId !== activeJobId) throw new Error('작업이 바뀌었습니다. 파일을 다시 첨부하세요.');
         jobPendingAttachments.push(data);
         renderJobAttachments();
         status.textContent = '';
@@ -1263,7 +1263,7 @@ async function toggleJobStatus(status) {
     const job = jobsData.find(a => a.id === activeJobId);
     if (!job) return;
     const oldStatus = job.status;
-    const statusLabels = { 'open': 'TO DO', 'done': 'ACTIVE', 'archived': 'CLOSED' };
+    const statusLabels = { 'open': '할 일', 'done': '진행 중', 'archived': '종료됨' };
 
     try {
         await fetch(`/api/jobs/${activeJobId}`, {
@@ -1305,11 +1305,11 @@ function showCreateJob() {
     const form = document.createElement('div');
     form.className = 'job-create-form';
     form.innerHTML = `
-        <input type="text" placeholder="Job title" class="job-create-title" maxlength="120" autofocus>
-        <textarea placeholder="Description (optional)" class="job-create-body" maxlength="1000" rows="2"></textarea>
+        <input type="text" placeholder="작업 제목" class="job-create-title" maxlength="120" autofocus>
+        <textarea placeholder="설명 (선택)" class="job-create-body" maxlength="1000" rows="2"></textarea>
         <div class="job-create-actions">
-            <button class="cancel-btn" onclick="this.closest('.job-create-form').remove()">Cancel</button>
-            <button class="create-btn" onclick="submitCreateJob(this)">Create</button>
+            <button class="cancel-btn" onclick="this.closest('.job-create-form').remove()">취소</button>
+            <button class="create-btn" onclick="submitCreateJob(this)">만들기</button>
         </div>
     `;
     list.prepend(form);
@@ -1509,14 +1509,14 @@ function showConvertToJobModal(msgId) {
         modal.className = 'convert-job-modal hidden';
         modal.innerHTML = `
             <div class="convert-job-dialog">
-                <h3 class="convert-job-title">Convert to Job</h3>
-                <p class="convert-job-subtitle">An agent will write a job proposal for you to accept</p>
+                <h3 class="convert-job-title">작업으로 전환</h3>
+                <p class="convert-job-subtitle">에이전트가 작업 제안서를 쓰면 승인하면 됩니다</p>
                 <div class="convert-job-preview"></div>
-                <label class="convert-job-label">Ask agent to write proposal</label>
+                <label class="convert-job-label">제안서를 쓸 에이전트</label>
                 <select class="convert-job-agent"></select>
                 <div class="convert-job-actions">
-                    <button class="convert-job-cancel">Cancel</button>
-                    <button class="convert-job-confirm">Convert</button>
+                    <button class="convert-job-cancel">취소</button>
+                    <button class="convert-job-confirm">전환</button>
                 </div>
             </div>`;
         modal.addEventListener('click', (e) => {
@@ -1577,7 +1577,7 @@ async function _doConvertToJob() {
         id: Date.now(),
         sender: 'system',
         type: 'system',
-        text: `Asking @${agent} to create a job card\u2026`,
+        text: `@${agent}에게 작업 카드 작성을 요청하는 중\u2026`,
         channel: window.activeChannel,
         time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
     };
@@ -1618,12 +1618,12 @@ function showDeleteJobModal(jobId) {
         modal.className = 'convert-job-modal hidden';
         modal.innerHTML = `
             <div class="convert-job-dialog delete-job-dialog">
-                <h3 class="convert-job-title">Delete Job Permanently?</h3>
-                <p class="convert-job-subtitle">This removes the job and its messages permanently. This cannot be undone.</p>
+                <h3 class="convert-job-title">작업을 영구 삭제할까요?</h3>
+                <p class="convert-job-subtitle">작업과 메시지가 영구 삭제되며 되돌릴 수 없습니다.</p>
                 <div class="delete-job-target"></div>
                 <div class="convert-job-actions">
-                    <button class="convert-job-cancel">Cancel</button>
-                    <button class="delete-job-confirm">Delete</button>
+                    <button class="convert-job-cancel">취소</button>
+                    <button class="delete-job-confirm">삭제</button>
                 </div>
             </div>`;
         modal.addEventListener('click', (e) => {
@@ -1636,7 +1636,7 @@ function showDeleteJobModal(jobId) {
     const job = jobsData.find(a => a.id === jobId);
     const target = modal.querySelector('.delete-job-target');
     if (target) {
-        const title = job?.title || `Job #${jobId}`;
+        const title = job?.title || `작업 #${jobId}`;
         target.textContent = title;
     }
 
@@ -1695,7 +1695,7 @@ async function acceptProposal(msgId) {
             if (card) {
                 card.classList.add('proposal-resolved');
                 const actions = card.querySelector('.proposal-actions');
-                if (actions) actions.innerHTML = '<div class="proposal-status-resolved">Accepted</div>';
+                if (actions) actions.innerHTML = '<div class="proposal-status-resolved">승인됨</div>';
             }
             // Open the job (don't push to jobsData — WS 'create' event handles that)
             const panel = document.getElementById('jobs-panel');
@@ -1916,10 +1916,10 @@ function updateArchiveTrashHint(container) {
     const hint = trash.querySelector('.archive-trash-hint');
     if (count > 0) {
         trash.classList.add('has-selection');
-        hint.textContent = `Delete ${count} selected`;
+        hint.textContent = `선택한 ${count}개 삭제`;
     } else {
         trash.classList.remove('has-selection');
-        hint.textContent = 'Drag here to delete';
+        hint.textContent = '여기로 끌어서 삭제';
     }
 }
 
